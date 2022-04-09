@@ -42,7 +42,7 @@ class PackerTest {
      */
     private void writeToFile(String results) {
 
-        Path resource = Paths.get("packer", "src","test","resources", "example_output");
+        Path resource = Paths.get("src","test","resources", "example_output");
         String outputPath = resource.toFile().getAbsolutePath();
 
         logger.info(outputPath);
