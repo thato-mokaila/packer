@@ -5,6 +5,7 @@ import com.mobiquity.models.LineImpl;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,8 +27,16 @@ class LineSorterImplTest {
             add(DeliveryPackage.builder().index(9).cost(78.0).weight(89.95).build());
         }};
 
+        List<Comparator<DeliveryPackage>> strategies = List.of(
+                Comparator.comparing(DeliveryPackage::getWeight),
+                Comparator.comparing(DeliveryPackage::getCost, Comparator.reverseOrder())
+        );
+
         LineSorterImpl lineSorter = new LineSorterImpl();
-        LineImpl line = lineSorter.apply(LineImpl.builder().packages(deliveryPackages).build());
+        LineImpl line = lineSorter.apply(
+                LineImpl.builder().packages(deliveryPackages).build(),
+                strategies
+        );
 
         assertEquals(9, line.getPackages().get(0).getIndex());
         assertEquals(6, line.getPackages().get(1).getIndex());

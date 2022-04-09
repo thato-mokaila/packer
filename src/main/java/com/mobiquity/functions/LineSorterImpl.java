@@ -5,8 +5,7 @@ import com.mobiquity.models.LineImpl;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.function.BiFunction;
 
 /**
  * Line sorting implementation class. Sorts the packages within
@@ -14,7 +13,7 @@ import java.util.stream.Collectors;
  *
  * @author thato
  */
-public class LineSorterImpl implements Function<LineImpl, LineImpl> {
+public class LineSorterImpl implements BiFunction<LineImpl, List<Comparator<DeliveryPackage>>, LineImpl> {
 
     /**
      * Iterates through all mapped delivery packages and from the provided
@@ -25,14 +24,14 @@ public class LineSorterImpl implements Function<LineImpl, LineImpl> {
      * by weight ASC is necessary to allow the selection of the first lesser
      * item should the cost of both items be the same.
      * @param source Line in file
+     * @param strategies Sorting strategies
      */
     @Override
-    public LineImpl apply(LineImpl source) {
-        List<DeliveryPackage> sorted = source.getPackages().stream()
-                .sorted(Comparator.comparing(DeliveryPackage::getWeight))
-                .sorted(Comparator.comparing(DeliveryPackage::getCost, Comparator.reverseOrder()))
-                .collect(Collectors.toList());
-        return LineImpl.builder().maxWeight(source.getMaxWeight()).packages(sorted).build();
+    public LineImpl apply(LineImpl source, List<Comparator<DeliveryPackage>> strategies) {
+        List<DeliveryPackage> packages = source.getPackages();
+        for (Comparator<DeliveryPackage> c : strategies) {
+            packages.sort(c);
+        }
+        return LineImpl.builder().maxWeight(source.getMaxWeight()).packages(packages).build();
     }
-
 }

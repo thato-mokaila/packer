@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,7 +84,11 @@ public class Packer {
    * @param source Line in file
    */
   private static LineImpl sortPackages(LineImpl source) {
-    return new LineSorterImpl().apply(source);
+    List<Comparator<DeliveryPackage>> strategies = List.of(
+            Comparator.comparing(DeliveryPackage::getWeight),
+            Comparator.comparing(DeliveryPackage::getCost, Comparator.reverseOrder())
+    );
+    return new LineSorterImpl().apply(source, strategies);
   }
 
   /**
