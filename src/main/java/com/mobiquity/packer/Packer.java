@@ -44,8 +44,8 @@ public class Packer {
       return Packer.processFile(filePath);
     } catch (Exception e) {
       logger.error("Failed to process input file {}", filePath, e);
+      throw new APIException(e.getMessage(), e);
     }
-    return null;
   }
 
   /**
